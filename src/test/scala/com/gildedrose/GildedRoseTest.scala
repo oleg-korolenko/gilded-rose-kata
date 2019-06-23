@@ -1,5 +1,6 @@
 package com.gildedrose
 
+import com.gildedrose.domain._
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
@@ -9,160 +10,134 @@ class GildedRoseTest extends FlatSpec with Matchers {
 
   behavior of "GildedRose update quantity"
 
-  behavior of "average item"
+  behavior of "AverageItem"
 
-  it should "update an average item by decreasing quality & sell-in value" in {
-    val items = Array[Item](
-      new Item("+5 Dexterity Vest", 10, 20)
-    )
+  it should "update an AverageItem by decreasing quality & sell-in value" in {
+    val item = AverageItem("+5 Dexterity Vest", 10, 20)
 
-    val expectedItem = new Item("+5 Dexterity Vest", 9, 19)
-    val app = new GildedRose(items)
-    app.updateQuality()
-    app.items(0).name should equal(expectedItem.name)
-    app.items(0).sellIn should equal(expectedItem.sellIn)
-    app.items(0).quality should equal(expectedItem.quality)
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = item.quality - 1))
+
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
   }
 
-  it should "update an average item by decreasing sell-in value but keeping quality at 0 since the latter can't go below" in {
-    val items = Array[Item](
-      new Item("+5 Dexterity Vest", 10, 0)
-    )
+  it should "update an AverageItem by decreasing sell-in value but keeping quality at 0 since the latter can't go below" in {
+    val item = AverageItem("+5 Dexterity Vest", 10, 0)
 
-    val expectedItem = new Item("+5 Dexterity Vest", 9, 0)
-    val app = new GildedRose(items)
-    app.updateQuality()
-    app.items(0).name should equal(expectedItem.name)
-    app.items(0).sellIn should equal(expectedItem.sellIn)
-    app.items(0).quality should equal(expectedItem.quality)
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = 0))
+
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
   }
 
-  it should "update an average item by decreasing quality by 2 & sell-in value by 1 if sellin-value is negative" in {
-    val items = Array[Item](
-      new Item("+5 Dexterity Vest", 0, 20)
-    )
+  it should "update an AverageItem by decreasing quality by 2 & sell-in value by 1 if sellin-value is negative" in {
+    val item = AverageItem("+5 Dexterity Vest", -1, 20)
 
-    val expectedItem = new Item("+5 Dexterity Vest", -1, 18)
-    val app = new GildedRose(items)
-    app.updateQuality()
-    app.items(0).name should equal(expectedItem.name)
-    app.items(0).sellIn should equal(expectedItem.sellIn)
-    app.items(0).quality should equal(expectedItem.quality)
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = item.quality - 2))
+
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
   }
 
-  behavior of "Backstage passes to a TAFKAL80ETC concert"
+  behavior of "BackstagePass"
 
-  it should "update [Backstage passes to a TAFKAL80ETC concert] by increasing quality & decreasing sell-in value" in {
-    val items = Array[Item](
-      new Item("Backstage passes to a TAFKAL80ETC concert", 11, 20)
-    )
+  it should "update BackstagePass by increasing quality & decreasing sell-in value" in {
+    val item =
+      BackStagePass("BackstagePass", 11, 20)
 
-    val expectedItem =
-      new Item("Backstage passes to a TAFKAL80ETC concert", 10, 21)
-    val app = new GildedRose(items)
-    app.updateQuality()
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = item.quality + 1))
 
-    app.items(0).name should equal(expectedItem.name)
-    app.items(0).sellIn should equal(expectedItem.sellIn)
-    app.items(0).quality should equal(expectedItem.quality)
-
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
   }
-  // TODO in specs <=10
-  it should "update backstage passes by increasing quality by 2 & decreasing sell-in value when sell-in <10" in {
-    val items = Array[Item](
-      new Item("Backstage passes to a TAFKAL80ETC concert", 10, 20)
-    )
 
-    val expectedItem =
-      new Item("Backstage passes to a TAFKAL80ETC concert", 9, 22)
-    val app = new GildedRose(items)
-    app.updateQuality()
+  it should "update BackstagePass by increasing quality by 2 & decreasing sell-in value when sell-in <10" in {
+    val item =
+      BackStagePass("BackstagePass", 10, 20)
 
-    app.items(0).name should equal(expectedItem.name)
-    app.items(0).sellIn should equal(expectedItem.sellIn)
-    app.items(0).quality should equal(expectedItem.quality)
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = item.quality + 2))
 
-  }
-  // TODO in specs <=5
-  it should "update backstage passes by increasing quality by 3 & decreasing sell-in value when sell-in <5" in {
-    val items = Array[Item](
-      new Item("Backstage passes to a TAFKAL80ETC concert", 5, 20)
-    )
-
-    val expectedItem =
-      new Item("Backstage passes to a TAFKAL80ETC concert", 4, 23)
-    val app = new GildedRose(items)
-    app.updateQuality()
-
-    app.items(0).name should equal(expectedItem.name)
-    app.items(0).sellIn should equal(expectedItem.sellIn)
-    app.items(0).quality should equal(expectedItem.quality)
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
 
   }
 
-  it should "update backstage passes by dropping quality to 0 & decreasing sell-in value when sell-in <0" in {
-    val items = Array[Item](
-      new Item("Backstage passes to a TAFKAL80ETC concert", 0, 20)
-    )
+  it should "update BackstagePass by increasing quality by 3 & decreasing sell-in value when sell-in <5" in {
+    val item = BackStagePass("BackstagePass", 5, 20)
 
-    val expectedItem =
-      new Item("Backstage passes to a TAFKAL80ETC concert", -1, 0)
-    val app = new GildedRose(items)
-    app.updateQuality()
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = item.quality + 3))
 
-    app.items(0).name should equal(expectedItem.name)
-    app.items(0).sellIn should equal(expectedItem.sellIn)
-    app.items(0).quality should equal(expectedItem.quality)
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
 
   }
 
-  behavior of "Aged Brie"
+  it should "update BackstagePass by dropping quality to 0 & decreasing sell-in value when sell-in <=0" in {
+    val item = BackStagePass("BackstagePass", 0, 20)
 
-  it should "update [Aged Brie] by increasing quality & decreasing sell-in value" in {
-    val items = Array[Item](
-      new Item("Aged Brie", 10, 20)
-    )
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = 0))
 
-    val expectedItem = new Item("Aged Brie", 9, 21)
-    val app = new GildedRose(items)
-    app.updateQuality()
-
-    app.items(0).name should equal(expectedItem.name)
-    app.items(0).sellIn should equal(expectedItem.sellIn)
-    app.items(0).quality should equal(expectedItem.quality)
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
 
   }
 
-  it should "only update [Aged Brie] by decreasing its sell-in value since quality is already at the max = 50 " in {
-    val items = Array[Item](
-      new Item("Aged Brie", 10, 50)
-    )
+  behavior of "AgedBrie"
 
-    val expectedItem = new Item("Aged Brie", 9, 50)
-    val app = new GildedRose(items)
-    app.updateQuality()
+  it should "update AgedBrie by increasing quality & decreasing sell-in value" in {
+    val item = AgedBrie(10, 20)
 
-    app.items(0).name should equal(expectedItem.name)
-    app.items(0).sellIn should equal(expectedItem.sellIn)
-    app.items(0).quality should equal(expectedItem.quality)
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = item.quality + 1))
+
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
+
+  }
+
+  it should "only update AgedBrie by decreasing its sell-in value since quality is already at the max = 50 " in {
+    val item = AgedBrie(10, 50)
+
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1))
+
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
 
   }
 
   behavior of "Sulfuras, Hand of Ragnaros"
 
   it should "not update the legendary item" in {
-    val item = new Item("Sulfuras, Hand of Ragnaros", 10, 10)
-    val items = Array[Item](item)
+    val item = SulfurasTheHand(10)
 
-    val expectedItem = item
-
-    val app = new GildedRose(items)
-    app.updateQuality()
-
-    app.items(0).name should equal(expectedItem.name)
-    app.items(0).sellIn should equal(expectedItem.sellIn)
-    app.items(0).quality should equal(expectedItem.quality)
+    GildedRose.updateQuality(Array(item)) should equal(Array(item))
 
   }
 
+  behavior of "ConjuredItem"
+  it should "update an average item by decreasing quality by 2 & sell-in value by 1" in {
+    val item = ConjuredItem("+5 Dexterity Vest", 10, 20)
+
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = item.quality - 2))
+
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
+  }
+
+  it should "update an average item by decreasing sell-in value but keeping quality at 0 since the latter can't go below" in {
+    val item = ConjuredItem("+5 Dexterity Vest", 10, 0)
+
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = 0))
+
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
+  }
+
+  it should "update an average item by decreasing quality by 4 & sell-in value by 1 if sellin-value is negative" in {
+    val item = ConjuredItem("+5 Dexterity Vest", -1, 20)
+
+    val expectedItems =
+      Array(item.copy(sellIn = item.sellIn - 1, quality = item.quality - 4))
+
+    GildedRose.updateQuality(Array(item)) should equal(expectedItems)
+  }
 }
