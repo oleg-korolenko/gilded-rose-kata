@@ -5,11 +5,9 @@ organization := "com.gildedrose"
 scalafmtOnCompile := true
 scalacOptions ++= commonScalacOptions
 fork in Test := true
-parallelExecution in Test := false
+parallelExecution in Test := true
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest,"-oDF")
 libraryDependencies ++= Seq(D.scalaTest % "test")
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Compiler settings
@@ -18,6 +16,10 @@ lazy val commonScalacOptions = Seq(
   "-deprecation",
   "-encoding",
   "UTF-8",
+  "-feature",
+  "-language:existentials",
+  "-language:higherKinds",
+  "-language:implicitConversions",
   "-unchecked",
   "-Xfatal-warnings",
   "-Xlint",
